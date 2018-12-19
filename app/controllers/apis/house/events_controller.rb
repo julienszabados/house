@@ -22,10 +22,7 @@ class Apis::House::EventsController < Apis::AbstractController
       maid_cleaning_time = Date.today.tuesday? && (Time.now.hour >= 11 && Time.now.hour <= 18)
       if maid_cleaning_time
         open(LOGS_FILE, 'a') { |f|
-          f.puts "IP : #{request.remote_ip} \n"
-          f.puts "Time: #{Time.now} \n"
-          f.puts "Event : Femme de ménage détectée dans le salon. \n"
-          f.puts "----- \n"
+          f.puts "#{Time.now} | Info :\n Femme de ménage détectée dans le salon"
         }
       else
         open(LOGS_FILE, 'a') { |f|
@@ -33,9 +30,8 @@ class Apis::House::EventsController < Apis::AbstractController
         }      
 
         ActionMailer::Base.mail(from: "house@js-projects.fr", to: ["julien.szabados@gmail.com", "sonia.hamrani@simplebo.fr"], subject: "House - Alerte", body: message_for_event_type(@event_type)).deliver_now        
-        account_sid = 'ACce20fbad3f1551f15076f6697ee79a4c'
-        auth_token = 'edd6c86b46d54d31416a6150245d2fd1'
-        client = Twilio::REST::Client.new account_sid, auth_token
+
+        client = Twilio::REST::Client.new Settings.apis.twilio.account_sid, Settings.apis.twilio.auth_token
 
         RECIPIENTS.each do |recipient|
           client.api.account.messages.create(from: HOUSE_NUMBER, to: recipient, body: message_for_event_type(@event_type))          
@@ -55,7 +51,7 @@ class Apis::House::EventsController < Apis::AbstractController
   def message_for_event_type(event_type)
     case event_type
       when :burglar_detected
-        "Alerte ! \n Un intrus a été détecté dans le salon pendant votre absence."
+        "Alerte !\n Un intrus a été détecté dans le salon pendant votre absence."
       when :sensor_living_room_low_battery
         "Attention ! \n La batterie du sensor du salon est à 20%."
     end
