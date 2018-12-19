@@ -1,6 +1,6 @@
 class Apis::House::EventsController < Apis::AbstractController
   
-  before_action :set_notification_type
+  before_action :set_event_type
   
   EVENTS = [
     :burglar_detected,
@@ -11,6 +11,8 @@ class Apis::House::EventsController < Apis::AbstractController
     '+33626702113',
     '+33666228541'
   ]
+  
+  HOUSE_NUMBER = '+33644608503'
   
   LOGS_FILE = Rails.root.join('files', 'api-house-events.logs')
   
@@ -27,16 +29,17 @@ class Apis::House::EventsController < Apis::AbstractController
         }
       else
         open(LOGS_FILE, 'a') { |f|
-          f.puts "#{Time.now} | #{message_for_notification_type(@event_type)}"
+          f.puts "#{Time.now} | #{message_for_event_type(@event_type)}"
         }      
-#         ActionMailer::Base.mail(from: "notifications-house@origa-print.fr", to: ["julien.szabados@gmail.com", "sonia.hamrani@simplebo.fr"], subject: "Alert", body: message_for_notification_type(@event_type)).deliver_now        
-#         account_sid = 'ACce20fbad3f1551f15076f6697ee79a4c'
-#         auth_token = 'edd6c86b46d54d31416a6150245d2fd1'
-#         house_number = '+33644608503'
-#         @client = Twilio::REST::Client.new account_sid, auth_token
-#         RECIPIENTS.each do |recipient|
-#           @client.api.account.messages.create(from: house_number, to: recipient, body: message_for_notification_type(@event_type))          
-#         end
+
+        ActionMailer::Base.mail(from: "house@js-projects.fr", to: ["julien.szabados@gmail.com", "sonia.hamrani@simplebo.fr"], subject: "House - Alerte", body: message_for_event_type(@event_type)).deliver_now        
+        account_sid = 'ACce20fbad3f1551f15076f6697ee79a4c'
+        auth_token = 'edd6c86b46d54d31416a6150245d2fd1'
+        client = Twilio::REST::Client.new account_sid, auth_token
+
+        RECIPIENTS.each do |recipient|
+          client.api.account.messages.create(from: HOUSE_NUMBER, to: recipient, body: message_for_event_type(@event_type))          
+        end
       end
     end
 
@@ -45,11 +48,11 @@ class Apis::House::EventsController < Apis::AbstractController
   
   private
   
-  def set_notification_type
+  def set_event_type
     @event_type = params[:event_type].to_sym  if params[:event_type].present?
   end
     
-  def message_for_notification_type(event_type)
+  def message_for_event_type(event_type)
     case event_type
       when :burglar_detected
         "Alerte ! \n Un intrus a été détecté dans le salon pendant votre absence."

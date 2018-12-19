@@ -1,0 +1,15 @@
+current directory: /home/julien-szabados/house/vendor/bundle/ruby/2.5.0/gems/bindex-0.5.0/ext/bindex
+/usr/alwaysdata/ruby/2.5.3/bin/ruby -r ./siteconf20181218-470748-zb3fhs.rb extconf.rb
+creating Makefile
+
+current directory: /home/julien-szabados/house/vendor/bundle/ruby/2.5.0/gems/bindex-0.5.0/ext/bindex
+make "DESTDIR=" clean
+
+current directory: /home/julien-szabados/house/vendor/bundle/ruby/2.5.0/gems/bindex-0.5.0/ext/bindex
+make "DESTDIR="
+compiling cruby.c
+linking shared-object bindex/cruby.so
+
+current directory: /home/julien-szabados/house/vendor/bundle/ruby/2.5.0/gems/bindex-0.5.0/ext/bindex
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 cruby.so ./.gem.20181218-470748-1b53ni6/bindex
